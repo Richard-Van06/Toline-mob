@@ -6,15 +6,19 @@
     <div class="mytabs">
       <van-tabs>
         <van-tab v-for="index in 6" :key="index" :title="'标签 ' + index">
-          <!-- 列表 -->
-          <!-- v-model：设置当前 list 是否处理加载状态 如果 v-model 为 true 那么不会再次执行 load 事件-->
-          <!-- finished：设置当前 List 中的数据是否加载完毕 -->
-          <!-- finished-text：设置当 list 将数据加载完成之后再次上拉时显示的文字 -->
-          <!-- load：1）当页面加载时会默认调用一次，2）当上拉触底时，会触发这个方法 -->
-          <!-- 这个方法有个坑：会自动将 list 中的 v-model 中对应属性设置 true,并且不自动设置为 false,在使用时，需要手动设置为 false -->
-          <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
-            <van-cell v-for="item in list" :key="item" :title="item" />
-          </van-list>
+          <!-- 下拉刷新 -->
+          <!-- v-model:  -->
+          <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
+            <!-- 列表 -->
+            <!-- v-model：设置当前 list 是否处理加载状态 如果 v-model 为 true 那么不会再次执行 load 事件-->
+            <!-- finished：设置当前 List 中的数据是否加载完毕 -->
+            <!-- finished-text：设置当 list 将数据加载完成之后再次上拉时显示的文字 -->
+            <!-- load：1）当页面加载时会默认调用一次，2）当上拉触底时，会触发这个方法 -->
+            <!-- 这个方法有个坑：会自动将 list 中的 v-model 中对应属性设置 true,并且不自动设置为 false,在使用时，需要手动设置为 false -->
+            <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="onLoad">
+              <van-cell v-for="item in list" :key="item" :title="item" />
+            </van-list>
+          </van-pull-refresh>
         </van-tab>
       </van-tabs>
       <!-- 频道右边小图标 -->
@@ -34,10 +38,13 @@ export default {
       // list
       finished: false,
       // list中的数据源
-      list: []
+      list: [],
+      // 下拉刷新组件的状态
+      isLoading: false
     }
   },
   methods: {
+    // 页面下滑加载内容
     onLoad () {
       // 扩展运算符(三点运算符)
       // 前面的数据源(this.list) 加上后面加载的10条数据(更新的数据)
@@ -51,6 +58,13 @@ export default {
       console.log('3211')
       // 重新设置v-model中的loading的值
       this.loading = false
+    },
+    // 下拉后, 顶部内容刷新
+    onRefresh () {
+      // 重新加载list 内容列表
+      this.list = []
+      this.onLoad()
+      this.isLoading = false
     }
   }
 }
