@@ -5,7 +5,7 @@
     <!-- 频道栏 -->
     <div class="mytabs">
       <van-tabs>
-        <van-tab v-for="index in 6" :key="index" :title="'标签 ' + index">
+        <van-tab v-for="(item, index) in ChannelsList" :key="index" :title="item.name">
           <!-- 下拉刷新 -->
           <!-- v-model:  -->
           <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
@@ -30,6 +30,10 @@
 </template>
 
 <script>
+
+// 按需导入请求频道的方法
+import { apiGetChannelList } from '@/Api/channel'
+
 export default {
   data () {
     return {
@@ -38,7 +42,7 @@ export default {
       // list
       finished: false,
       // list中的数据源
-      list: [],
+      ChannelsList: [],
       // 下拉刷新组件的状态
       isLoading: false
     }
@@ -65,7 +69,26 @@ export default {
       this.list = []
       this.onLoad()
       this.isLoading = false
+    },
+    // 频道列表数据
+    async getChannelList () {
+      try {
+        let res = await apiGetChannelList(this.$http, {
+          url: '/user/channels',
+          method: 'GET'
+        })
+        console.log(res)
+        // 将频道列表信息保存到 ChannelsList 中
+        this.ChannelsList = res.channels
+      } catch (error) {
+        this.$toast.fail('获取信息失败')
+      }
     }
+  },
+  // 打开网页开始加载
+  created () {
+    // 加载频道列表的数据
+    this.getChannelList()
   }
 }
 </script>

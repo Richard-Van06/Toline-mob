@@ -7,6 +7,8 @@
 
 // 导入axios
 import axios from 'axios'
+// 导入store
+import store from '@/store'
 
 // 创建一个axios 实例
 const instance = axios.create({
@@ -22,6 +24,16 @@ const instance = axios.create({
 // 原本的axios更换成instance
 instance.interceptors.request.use(function (config) {
   // 请求信息
+  // 判断用户是否登录---> 判断store 中 state的 user 是否存在
+  // 在组件内部 this 指的是vue实例, 不是在组件内部,别用this  而这里是模块
+  // let user = this.$store.state.user  // 这里的this 使用错误
+  // 上面导入了store
+  let user = store.state.user
+  // 判断user有没有数据
+  if (user) {
+    // 如果有数据, 在请求头里添加 token
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
   return config
 }, function (error) {
   // 请求失败的逻辑
