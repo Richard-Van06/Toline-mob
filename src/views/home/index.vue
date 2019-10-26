@@ -87,6 +87,11 @@ export default {
       channel.articleList = [...channel.articleList, ...res.results]
       // 将本次返回的时间戳进行保存
       channel.timestamp = res.pre_timestamp
+      // 判断返回的数据是否为空
+      if (res.pre_timestamp === null) {
+        // 说明频道已经加载完成
+        channel.finished = true
+      }
       // 关闭加载状态
       channel.up = false
     },
@@ -98,6 +103,8 @@ export default {
       channel.articleList = []
       // 将时间戳 设置为0
       channel.timestamp = 0
+      channel.finished = false
+      channel.up = false
       // 重新获取数据
       this.onLoad()
       // 将下拉状态重置为false
