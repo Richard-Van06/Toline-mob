@@ -12,7 +12,7 @@ import store from '@/store'
 
 // 创建一个axios 实例
 const instance = axios.create({
-  baseURL: 'http://ttapi.research.itcast.cn/app/' // 基准地址
+  baseURL: 'http://ttapi.research.itcast.cn/app/v1_0/' // 基准地址
 })
 
 // 设置统一的请求基准地址
@@ -49,6 +49,39 @@ instance.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
+// 再创建一个 axios 实例
+const instance2 = axios.create({
+  baseURL: 'http://ttapi.research.itcast.cn/app/v1_1/'
+})
+// 请求拦截器
+// 原本的axios更换成instance
+instance2.interceptors.request.use(function (config) {
+  // 请求信息
+  // 判断用户是否登录---> 判断store 中 state的 user 是否存在
+  // 在组件内部 this 指的是vue实例, 不是在组件内部,别用this  而这里是模块
+  // let user = this.$store.state.user  // 这里的this 使用错误
+  // 上面导入了store
+  let user = store.state.user
+  // 判断user有没有数据
+  if (user) {
+    // 如果有数据, 在请求头里添加 token
+    config.headers.Authorization = `Bearer ${user.token}`
+  }
+  return config
+}, function (error) {
+  // 请求失败的逻辑
+  return Promise.reject(error)
+})
+
+// 响应拦截器
+instance2.interceptors.response.use(function (response) {
+  // 服务器响应的数据
+  return response.data.data
+}, function (error) {
+  // 响应失败的逻辑
+  return Promise.reject(error)
+})
+
 // 将 axios 挂在到vue 的实例中
 // Vue.prototype.$http = axios
 
@@ -60,6 +93,8 @@ MyPlugin.install = function (Vue) {
   // 添加逻辑
   // 将 axios实例 挂载在Vue 实例中
   Vue.prototype.$http = instance
+  // 将 axios实例 挂载在Vue 实例中
+  Vue.prototype.$http2 = instance2
 }
 
 // 暴露插件对象, 不应该是axios对象---instance

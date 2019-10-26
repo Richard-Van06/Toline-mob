@@ -74,8 +74,8 @@ export default {
         timestamp = channel.timestamp
       }
       // 根据id 请求文章数据
-      let res = await apiGetChannleArticle(this.$http, {
-        url: '/v1_1/articles',
+      let res = await apiGetChannleArticle(this.$http2, {
+        url: '/articles',
         method: 'GET',
         query: {
           channel_id: channelId, // 需要的频道id
@@ -127,7 +127,7 @@ export default {
           } else {
             // 如果没有频道数据,则发送请求到服务器 请求数据
             let res = await apiGetChannelList(this.$http, {
-              url: '/v1_0/user/channels',
+              url: '/user/channels',
               method: 'GET'
             })
             // 将服务器返回的数据 设置给 channelsList
@@ -136,7 +136,7 @@ export default {
         } else {
           // 如果登录了
           let res = await apiGetChannelList(this.$http, {
-            url: '/v1_0/user/channels',
+            url: '/user/channels',
             method: 'GET'
           })
           // 将服务器返回的数据 设置给 channelsList
