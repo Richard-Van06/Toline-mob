@@ -8,6 +8,11 @@ Vue.use(VueRouter)
 // 创建了一个路由信息对象集合
 const routes = [
   {
+    // 重定向
+    path: '/',
+    redirect: '/home'
+  },
+  {
     // 登录路由
     path: '/login',
     name: 'login',

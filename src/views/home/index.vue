@@ -50,66 +50,65 @@ export default {
       finished: false,
       // list中的数据源
       channelsList: [],
-      // // 下拉刷新组件的状态
-      // isLoading: false
       // 设置激活的tab
+      // 默认选中的频道下标
       activeTab: 0
     }
   },
   methods: {
     // 页面下滑加载内容
     async onLoad () {
-      // // 扩展运算符(三点运算符) **********
-      // // 前面的数据源(this.list) 加上后面加载的10条数据(更新的数据)
-      // // 让list 在原有数据的基础上再添加 1-10个数据
-      // this.list = [...this.list, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
-      // // 判断内容触底, 不能再下拉
-      // if (this.list.length >= 80) {
-      //   // 已经加载完成
-      //   this.finished = true
-      // }
-      // console.log('3211')
-      // // 重新设置v-model中的loading的值
-      // this.loading = false  // **********
+      // 当 打开页面 会执行 list 中的 load事件
       // 得到当前选中的 频道
-      let channle = this.channelsList[this.activeTab]
+      let channel = this.channelsList[this.activeTab]
       // 得到当前频道的id
-      let channelid = channle.id
+      let channelId = channel.id
+      // 定义 timestamp
+      let timestamp
+      // 判断 当前请求是否是第一次
+      if (channel.timestamp === 0) {
+        // 当请求是第一次时
+        timestamp = Date.now()
+      } else {
+        // 当请求不是第一次时
+        timestamp = channel.timestamp
+      }
       // 根据id 请求文章数据
       let res = await apiGetChannleArticle(this.$http, {
-        url: '/v1_0/articles',
+        url: '/v1_1/articles',
         method: 'GET',
         query: {
-          channel_id: channelid, // 需要的频道id
-          timestamp: Date.now(), // 当前的时间戳
+          channel_id: channelId, // 需要的频道id
+          timestamp: timestamp, // 当前的时间戳
           with_top: 0 // 是否置顶, 0-->不置顶
         }
       })
-      // console.log(res)
-      // 将数据源保存到当前频道下的 articlelist
-      channle.articleList = res.result
+      // 将数据源追加到当前频道下的 articlelist
+      channel.articleList = [...channel.articleList, ...res.results]
+      // 将本次返回的时间戳进行保存
+      channel.timestamp = res.pre_timestamp
       // 关闭加载状态
-      channle.up = false
+      channel.up = false
     },
     // 下拉后, 顶部内容刷新
     onRefresh () {
-      // 重新加载list 内容列表
-      this.list = []
+      // 得到当前选中的频道
+      let channel = this.channelsList[this.activeTab]
+      // 清除数据源
+      channel.articleList = []
+      // 将时间戳 设置为0
+      channel.timestamp = 0
+      // 重新获取数据
       this.onLoad()
-      this.isLoading = false
+      // 将下拉状态重置为false
+      channel.pull = false
     },
     // 频道列表数据
     async getChannelList () {
       try {
-        // 判断用户是否登录：
-        //  如果登录 ---> 直接请求用户频道数据
-        //  如果没有登录
-        //      localostroage 中是否存储数据
-        //          如果存在直接获取
-        //          如果不存在再去服务器中得到
+        // 判断用户是否登录
         // 得到用户信息
         let user = this.$store.state.user
-        console.log(user)
         // 判断 如果没有登录过(游客)
         if (!user) {
           // 获取用户保存在 localStorage 中的频道数据
@@ -124,7 +123,6 @@ export default {
               url: '/v1_0/user/channels',
               method: 'GET'
             })
-            console.log(res)
             // 将服务器返回的数据 设置给 channelsList
             this.channelsList = res.channels
           }
@@ -134,7 +132,6 @@ export default {
             url: '/v1_0/user/channels',
             method: 'GET'
           })
-          console.log(res)
           // 将服务器返回的数据 设置给 channelsList
           this.channelsList = res.channels
         }
