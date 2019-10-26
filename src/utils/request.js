@@ -12,7 +12,7 @@ import store from '@/store'
 
 // 创建一个axios 实例
 const instance = axios.create({
-  baseURL: 'http://ttapi.research.itcast.cn/app/v1_0/' // 基准地址
+  baseURL: 'http://ttapi.research.itcast.cn/app/' // 基准地址
 })
 
 // 设置统一的请求基准地址

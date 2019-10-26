@@ -9,6 +9,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   // 统一管理项目中的公用数据
   state: {
+    // 用户信息
     user: getUserLocal()
   },
   // 修改state 中的数据

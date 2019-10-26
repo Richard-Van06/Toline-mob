@@ -11,12 +11,12 @@ function setUserLocal (value) {
 }
 
 // 删除 user
-function removeUserLocal (value) {
+function removeUserLocal () {
   window.localStorage.removeItem(USER_KEY)
 }
 
 // 查询 user
-function getUserLocal (value) {
+function getUserLocal () {
   window.localStorage.getItem(USER_KEY)
 }
 

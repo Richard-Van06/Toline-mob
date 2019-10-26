@@ -68,7 +68,7 @@ export default {
         this.loginLoading = true
         // 开始发送请求 请求数据
         let res = await userLogin(this.$http, {
-          url: '/authorizations',
+          url: '/v1_0/authorizations',
           method: 'POST',
           data: this.user
         })
