@@ -5,5 +5,13 @@ function apiGetChannelList (axios, { url, method }) {
     method: method
   })
 }
+
+// 得到所有频道数据
+function apiGetAllChannelsList (axios, { url, method }) {
+  return axios({
+    url: url,
+    method: method
+  })
+}
 // 按需导出
-export { apiGetChannelList }
+export { apiGetChannelList, apiGetAllChannelsList }
