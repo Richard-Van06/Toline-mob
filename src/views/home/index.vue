@@ -27,13 +27,20 @@
       </van-tabs>
       <!-- 频道右边小图标 -->
       <div class="tab-icon">
-        <van-icon name="apps-o" />
+        <!-- show=true 直接找到data中的show 重新赋值 -->
+        <van-icon @click="show=true" name="apps-o" />
       </div>
     </div>
+    <!-- 添加弹出框 -->
+    <channelPop v-model="show" :channelsList="channelsList"></channelPop>
+    <!-- v-model 在组件中的使用 -->
+    <!-- 给子组件添加一个属性:value  给子组件添加一个事件: input -->
   </div>
 </template>
 
 <script>
+// 导入组件
+import channelPop from '@/components/channelpopup'
 
 // 按需导入请求频道的方法
 import { apiGetChannelList } from '@/Api/channel.js'
@@ -48,11 +55,13 @@ export default {
       loading: false,
       // list
       finished: false,
-      // list中的数据源
+      // list中的数据源---频道数据
       channelsList: [],
       // 设置激活的tab
       // 默认选中的频道下标
-      activeTab: 0
+      activeTab: 0,
+      // 控制弹出层的显示与隐藏
+      show: true
     }
   },
   methods: {
@@ -116,6 +125,7 @@ export default {
         // 判断用户是否登录
         // 得到用户信息
         let user = this.$store.state.user
+        console.log(user)
         // 判断 如果没有登录过(游客)
         if (!user) {
           // 获取用户保存在 localStorage 中的频道数据
@@ -170,6 +180,10 @@ export default {
   created () {
     // 加载频道列表的数据
     this.getChannelList()
+  },
+  // 存放子组件
+  components: {
+    channelPop
   }
 }
 </script>

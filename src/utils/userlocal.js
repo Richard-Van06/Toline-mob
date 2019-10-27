@@ -17,7 +17,8 @@ function removeUserLocal () {
 
 // 查询 user
 function getUserLocal () {
-  window.localStorage.getItem(USER_KEY)
+  // window.localStorage.getItem(USER_KEY) 是字符串 需要转换成对象--->JSON.parse()  记得要return
+  return JSON.parse(window.localStorage.getItem(USER_KEY))
 }
 
 // 将方法暴露给外界
